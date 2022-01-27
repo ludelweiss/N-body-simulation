@@ -5,10 +5,7 @@ Created on Thu Jan 27 09:53:28 2022
 
 @author: Ludmilla ALLARD
 
-Écrire un programme permettant, à partir d'une condition initiale donnée (masses, vitesses et positions
-de toutes les particules), de déterminer le positions et vitesses à un instant t quelconque
-
-Partie préliminaire : modélisation du mouvement de la Lune autour de la Terre
+Partie preliminaire : modelisation simple entre deux corps
 """
 
 import numpy as np
