@@ -65,32 +65,31 @@ N=2
 i=3
 
 
-dV= np.vstack((fA(V,dt),fB(V,dt)))
-print(dV)
 
-def eulerA(dt, X, V, N, i):
-    tab_euler_X = np.zeros(3*N)
-    
-    for i in range(0,i) :
-        tab_euler_X[0]=X[0,0]+V[0,0]*dt
-        tab_euler_X[1]=X[1,0]+V[1,0]*dt
-        tab_euler_X[2]=X[2,0]+V[2,0]*dt
-    
-    tab_euler_V = np.zeros(3*N)
+def euler(dt, X, V, N, i):
+    tab_euler_X = np.zeros(i*N)
+    #calcul du tableau des X pour A et B :
+    for n in range(0,N):
+        for i in range(0,i) :
+            tab_euler_X[i]=X[i,n]+V[i,n]*dt
+            print(tab_euler_X)
+    tab_euler_V = np.zeros(i*N)
+    #stockage des valeur de dV de A et B dans dV :
     dV= np.vstack((fA(V,dt),fB(V,dt)))
-    
-    tab_euler_V[0]=V[0,0]+dVA[0]*dt
-    tab_euler_V[1]=V[1,0]+dVA[1]*dt
-    tab_euler_V[2]=V[2,0]+dVA[2]*dt
-    
-    
-    tab_euler_V[3]=V[0,1]+dVB[0]*dt
-    tab_euler_V[4]=V[1,1]+dVB[1]*dt
-    tab_euler_V[5]=V[2,1]+dVB[3]*dt
-    
-    return tab_euler
+    #stockage des valeurs de V pour A dans tab_euler_V :
+    for i in range(0,i):
+        tab_euler_V[i]=V[i,0]+dV[0,i]*dt
+        print(tab_euler_V)
+    #stockage des valeurs de B dans tab_euler_V :
+    for i in range(i,2*i):
+        tab_euler_V[i]=V[i,1]+dV[1,i]*dt
+        print(tab_euler_V)
 
+    return tab_euler_X , tab_euler_V
 
+print(euler(dt,X,V,N,i))
+
+'''
 # def Euler pour A :
 def eulerA(dt, X, V):
     tab_euler = np.zeros(6)
@@ -112,6 +111,5 @@ def eulerB(dt, X, V):
     tab_euler[4]=V[1,1]+fB2(V[1,1],dt)*dt
     tab_euler[5]=V[2,1]+fB3(V[2,1],dt)*dt
     return tab_euler
-
-
+'''
 
