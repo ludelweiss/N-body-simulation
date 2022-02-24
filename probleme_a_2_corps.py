@@ -90,7 +90,11 @@ def euler(dt, X, V, N, i):
 
 print(euler(dt,X,V,N,i))
 
-# creation du tableau
+"""
+Creation des tableaux contenants les positions et vitesses
+"""
+
+
 tab_euler = euler(dt, X, V, N, i)
 tab_euler_X = tab_euler[0]
 tab_euler_V = tab_euler[1]
@@ -102,7 +106,7 @@ interface graphique
 """
 
 plt.plot(tab_euler_X, tab_euler_V, label = "Trajectoire des particules")
-plt.xlabel("Position x")
-plt.ylabel("Vitesse v")
+plt.xlabel("x")
+plt.ylabel("y")
 plt.legend()
 plt.show()
