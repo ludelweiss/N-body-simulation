@@ -90,27 +90,5 @@ def euler(dt, X, V, N, i):
 
 print(euler(dt,X,V,N,i))
 
-'''
-# def Euler pour A :
-def eulerA(dt, X, V):
-    tab_euler = np.zeros(6)
-    tab_euler[0]=X[0,0]+V[0,0]*dt
-    tab_euler[1]=X[1,0]+V[1,0]*dt
-    tab_euler[2]=X[2,0]+V[2,0]*dt
-    tab_euler[3]=V[0,0]+fA1(V[0,0],dt)*dt
-    tab_euler[4]=V[1,0]+fA2(V[1,0],dt)*dt
-    tab_euler[5]=V[2,0]+fA3(V[2,0],dt)*dt
-    return tab_euler
 
-# def Euler pour B :
-def eulerB(dt, X, V):
-    tab_euler = np.zeros(2)
-    tab_euler[0]=X[0,1]+V[0,1]*dt
-    tab_euler[1]=X[1,1]+V[1,1]*dt
-    tab_euler[2]=X[2,1]+V[2,1]*dt
-    tab_euler[3]=V[0,1]+fB1(V[0,1],dt)*dt
-    tab_euler[4]=V[1,1]+fB2(V[1,1],dt)*dt
-    tab_euler[5]=V[2,1]+fB3(V[2,1],dt)*dt
-    return tab_euler
-'''
 
