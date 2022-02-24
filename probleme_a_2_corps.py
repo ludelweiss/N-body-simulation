@@ -1,6 +1,7 @@
 # Projet de modélisation séance 2 - 10/02/22
 
 import numpy as np
+import matplotlib.pylab as plt
 
 
 # Premier test avec deux corps de masses 1 :
@@ -90,5 +91,19 @@ def euler(dt, X, V, N, i):
 
 print(euler(dt,X,V,N,i))
 
+# creation du tableau
+tab_euler = euler(dt, X, V, N, i)
+tab_euler_X = tab_euler[0]
+tab_euler_V = tab_euler[1]
+print("Les tableaux", tab_euler_X, tab_euler_V)
 
 
+"""
+interface graphique
+"""
+
+plt.plot(tab_euler_X, tab_euler_V, label = "Trajectoire des particules")
+plt.xlabel("Position x")
+plt.ylabel("Vitesse v")
+plt.legend()
+plt.show()
