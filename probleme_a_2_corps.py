@@ -26,6 +26,7 @@ V[0,1]=1    #vitesse initiale des particules A et B
 # Distance entre A et B :
 def rab(X):
     rab=np.sqrt( (V[0,1]-V[0,0])**2 + (V[1,1]-V[1,0])**2 + (V[2,1]-V[2,0])**2 )
+    rab=np.sqrt( np.sum((V[:,0]-V[:,1])**2) )
     return rab
     
 # Norme de la force entre A et B en fonction de rab :
@@ -60,34 +61,29 @@ def fB(V, t):
 def euler(dt, X, V, N, i):
     
     #calcul du tableau des X pour A et B :
-    tab_euler_X = np.zeros(i*N)
+    tab_euler_X = np.zeros( (i,N) )
     for n in range(0,N):
-        for i in range(0,i*N) :
-            if (i<3):
-                tab_euler_X[i]=X[i,n]+V[i,n]*dt
-            if (i>=3):
-                tab_euler_X[i]=X[i-3,n]+V[i-3,n]*dt
-        i=3
-    tab_euler_X=tab_euler_X.reshape((3,N))
+        for i in range(0,i) :
+            tab_euler_X[i,n]=X[i,n]+V[i,n]*dt
+
     print("tab des positions :",tab_euler_X)
     
     i=3
-    tab_euler_V = np.zeros(i*N)
+    tab_euler_V = np.zeros((i,N))
     #stockage des valeur de dV de A et B dans dV :
-    dV= np.vstack((fA(V,dt),fB(V,dt)))
+    dV= np.vstack((fA(V,dt),fB(V,dt))).T
     print("dv=",dV)
     
     i=3
     #stockage des valeurs de V pour A dans tab_euler_V :
     for i in range(0,i):
-        tab_euler_V[i]=V[i,0]+dV[0,i]*dt
+        tab_euler_V[i,0]=V[i,0]+dV[i,0]*dt
     
     i=3
     #stockage des valeurs de B dans tab_euler_V :
-    for i in range(i,2*i):
-        tab_euler_V[i]=V[i-3,1]+dV[1,i-3]*dt
+    for i in range(0,i):
+        tab_euler_V[i,1]=V[i,1]+dV[i,1]*dt
     
-    tab_euler_V=tab_euler_V.reshape(3,N)
     print("tab des vitesses :",tab_euler_V)
 
     return tab_euler_X , tab_euler_V
