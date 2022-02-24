@@ -35,8 +35,9 @@ def Fab(rab):
     return Fab
 
 
-t=0
-dt=0.001
+t=0 #instant initial
+dt=1 #pas de temps pour l'intégration
+T=60 #intervalle d'intégration
 
 
 # Calcul du dv ajouté à chaque dt pour A :
@@ -101,12 +102,7 @@ tab_euler_V = tab_euler[1]
 print("Les tableaux", tab_euler_X, tab_euler_V)
 
 
-"""
-interface graphique
-"""
+#for t in range(0,T,dt):
+    #voir brouillon
 
-plt.plot(tab_euler_X, tab_euler_V, label = "Trajectoire des particules")
-plt.xlabel("x")
-plt.ylabel("y")
-plt.legend()
-plt.show()
+
