@@ -104,20 +104,3 @@ def mouvement(X,V,i,N,dt,T):
         VAL_X[:,:,t]=tab_euler[0]
         VAL_V[:,:,t]=tab_euler[1]   
     return VAL_X, VAL_V
-
-#conditions initiales :
-dt=1
-T=4
-X=np.zeros((i,N))
-X[0,1]=1
-V=np.zeros((i,N))
-V[0,1]=1
-N=2
-i=3
-
-print(mouvement(X,V,i,N,dt,T))
-    
-    
-    
-
-

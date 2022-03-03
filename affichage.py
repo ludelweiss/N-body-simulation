@@ -15,6 +15,7 @@ plt.style.use('dark_background')
 """
 Création des données
 """
+'''
 np.random.seed(3)   #permet de conserver les memes nombres aléatoires à chaque fois
 
 # positions des points :
@@ -23,12 +24,49 @@ y = 4 + np.random.normal(0, 2, len(x))
 
 # tailles et couleurs :
 sizes = np.random.uniform(15, 80, len(x))
-colors = np.random.uniform(15, 80, len(x)) #définir couleur en fonction des caractéristiques de l'étoile
+colors = np.random.uniform(15, 80, len(x))
+'''
 
-# tracé de la figure
+"""
+Cas simple à 2 particules
+"""
+# Variables
+G=1
+ma=1
+mb=1
+
+#nb d'objets :
+N=2
+#nb de coordonnées :
+i=3
+
+
+#conditions initiales :
+dt=1
+T=4
+X=np.zeros((i,N))
+X[0,1]=1
+V=np.zeros((i,N))
+V[0,1]=1
+N=2
+i=3
+
+mvt = pb2.mouvement(X,V,i,N,dt,T)
+tab_X = mvt[0][0]   #extraction du tableau des 
+x = tab_X[:,:1]
+
+tab_Y = mvt[1][0]   #extraction du tableau des 
+y = tab_X[:,:1]
+
+
+
+"""
+Tracé du graphique
+"""
 fig, ax = plt.subplots()
 
-ax.scatter(x, y, s=sizes, c=colors, vmin=0, vmax=100)
+#ax.scatter(x, y, s=sizes, c=colors, vmin=0, vmax=100)
+ax.scatter(x, y, vmin=0, vmax=100)
 
 ax.set(xlim=(0, 8), xticks=np.arange(1, 8),
        ylim=(0, 8), yticks=np.arange(1, 8))
