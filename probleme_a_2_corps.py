@@ -99,7 +99,7 @@ def mouvement(X,V,i,N,dt,T):
     VAL_X[:,:,0]=X
     VAL_V=np.zeros((i,N,T))
     VAL_V[:,:,0]=V
-    for t in range(0,T,dt):
+    for t in range(1,T,dt):
         tab_euler=euler(X,V,i,N,dt)
         VAL_X[:,:,t]=tab_euler[0]
         VAL_V[:,:,t]=tab_euler[1]   

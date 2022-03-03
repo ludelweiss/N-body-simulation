@@ -52,20 +52,21 @@ N=2
 i=3
 
 mvt = pb2.mouvement(X,V,i,N,dt,T)
-tab_X = mvt[0][0]   #extraction du tableau des 
-x = tab_X[:,:1]
 
-tab_Y = mvt[1][0]   #extraction du tableau des 
-y = tab_X[:,:1]
 
+
+tab_X = mvt[0][0]   #extraction du tableau des x
+tab_Y = mvt[0][1]   #extraction du tableau des y
+print(tab_Y)
 
 
 """
 Tracé du graphique
-"""
+
 fig, ax = plt.subplots()
 
 #ax.scatter(x, y, s=sizes, c=colors, vmin=0, vmax=100)
+
 ax.scatter(x, y, vmin=0, vmax=100)
 
 ax.set(xlim=(0, 8), xticks=np.arange(1, 8),
@@ -73,6 +74,25 @@ ax.set(xlim=(0, 8), xticks=np.arange(1, 8),
 
 ax.set_xlabel("x")
 ax.set_ylabel("y")
-ax.set_title("Positions des particules")
+ax.set_title("Positions des étoiles")
 
 plt.show()
+"""
+
+
+# Boucle pour afficher les graphiques à chaque temps
+for t in range(1,T+1) :
+    x = tab_X[:,t-1:t]
+    y = tab_Y[:,t-1:t]
+    print(x,"\n",y)
+    
+    fig, ax = plt.subplots()
+    
+    ax.scatter(x,y)
+    ax.set(xlim=(-2, 8), xticks=np.arange(-2, 8))
+    
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_title("Position des deux particules")
+    
+    plt.show()
