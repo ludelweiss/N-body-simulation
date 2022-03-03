@@ -31,7 +31,7 @@ def Initialisation(i,N,dim) :
     
     i=3
     # Initialisation des masses :
-    M=np.random.uniform(2E30,300*2E30,N)
+    M=np.random.uniform(0.07*2E30,300*2E30,N)
     
     return X,V,M
 
