@@ -59,50 +59,65 @@ def fB(V, t):
 
 
 
-def euler(dt, X, V, N, i):
+def euler(X, V, i, N, dt):
+    tab_euler_X = X
+    tab_euler_V = V
     
     #calcul du tableau des X pour A et B :
-    tab_euler_X = np.zeros( (i,N) )
     for n in range(0,N):
         for i in range(0,i) :
-            tab_euler_X[i,n]=X[i,n]+V[i,n]*dt
-
-    print("tab des positions :",tab_euler_X)
+            tab_euler_X[i,n]=tab_euler_X[i,n]+tab_euler_V[i,n]*dt
     
-    i=3
-    tab_euler_V = np.zeros((i,N))
     #stockage des valeur de dV de A et B dans dV :
     dV= np.vstack((fA(V,dt),fB(V,dt))).T
-    print("dv=",dV)
     
     i=3
     #stockage des valeurs de V pour A dans tab_euler_V :
     for i in range(0,i):
-        tab_euler_V[i,0]=V[i,0]+dV[i,0]*dt
+        tab_euler_V[i,0]=tab_euler_V[i,0]+dV[i,0]*dt
     
     i=3
     #stockage des valeurs de B dans tab_euler_V :
     for i in range(0,i):
-        tab_euler_V[i,1]=V[i,1]+dV[i,1]*dt
+        tab_euler_V[i,1]=tab_euler_V[i,1]+dV[i,1]*dt
     
-    print("tab des vitesses :",tab_euler_V)
+    i=3
 
     return tab_euler_X , tab_euler_V
 
-print(euler(dt,X,V,N,i))
+#print(euler(dt,X,V,N,i))
 
 """
 Creation des tableaux contenants les positions et vitesses
 """
 
 
-tab_euler = euler(dt, X, V, N, i)
-tab_euler_X = tab_euler[0]
-tab_euler_V = tab_euler[1]
-print("Les tableaux", tab_euler_X, tab_euler_V)
+#Fonction pour stocker la position X et la vitesse V en iD de N particules à chaque instant dt jusqu'à T :
+def mouvement(X,V,i,N,dt,T):
+    #tableau de taille (N,i,dt) pour stocker les valeurs finales de X et V :
+    VAL_X=np.zeros((i,N,T))
+    VAL_X[:,:,0]=X
+    VAL_V=np.zeros((i,N,T))
+    VAL_V[:,:,0]=V
+    for t in range(0,T,dt):
+        tab_euler=euler(X,V,i,N,dt)
+        VAL_X[:,:,t]=tab_euler[0]
+        VAL_V[:,:,t]=tab_euler[1]   
+    return VAL_X, VAL_V
 
+#conditions initiales :
+dt=1
+T=4
+X=np.zeros((i,N))
+X[0,1]=1
+V=np.zeros((i,N))
+V[0,1]=1
+N=2
+i=3
 
-#for t in range(0,T,dt):
-    #voir brouillon
+print(mouvement(X,V,i,N,dt,T))
+    
+    
+    
 
 
