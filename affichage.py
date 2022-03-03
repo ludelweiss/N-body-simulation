@@ -41,13 +41,15 @@ tab_Y = mvt[0][1]   #extraction du tableau des y
 
 plt.style.use('dark_background')
 
+
 # Boucle pour afficher les graphiques à chaque temps
 for t in range(1,T+1) :
+    
     x = tab_X[:,t-1:t]
     y = tab_Y[:,t-1:t]
-    print(x,"\n",y)
     
     colors = np.array((5,4))
+    
     fig, ax = plt.subplots()
     
     ax.scatter(x,y, c = colors)
@@ -56,5 +58,5 @@ for t in range(1,T+1) :
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     ax.set_title("Position des deux particules")
+    plt.savefig('mvt_2_particules_%03g.png'%t)
     
-    plt.show()
