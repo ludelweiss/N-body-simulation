@@ -1,12 +1,19 @@
-# Projet de modélisation séance 2 - 10/02/22
+"""
+Modélisation des interactions entre deux particules (premier cas élémentaire) :
+deux corps A et B de masse 1
+
+Calcul des trajectoires uniquement
+
+Séances 1 à 4
+
+Auteurs : Ludmilla Allard et Annaëlle Sorce
+"""
 
 import numpy as np
-import matplotlib.pylab as plt
-
 
 # Premier test avec deux corps de masses 1 :
 
-# Variables
+# Variables (choisies à 1 pour simplifier le problème)
 G=1
 ma=1
 mb=1
@@ -33,11 +40,6 @@ def rab(X):
 def Fab(rab):
     Fab=G*ma*mb*(1/rab**2)
     return Fab
-
-
-t=0 #instant initial
-dt=1 #pas de temps pour l'intégration
-T=60 #intervalle d'intégration
 
 
 # Calcul du dv ajouté à chaque dt pour A :
@@ -85,12 +87,11 @@ def euler(X, V, i, N, dt):
 
     return tab_euler_X , tab_euler_V
 
-#print(euler(dt,X,V,N,i))
+
 
 """
 Creation des tableaux contenants les positions et vitesses
 """
-
 
 #Fonction pour stocker la position X et la vitesse V en iD de N particules à chaque instant dt jusqu'à T :
 def mouvement(X,V,i,N,dt,T):
