@@ -35,3 +35,4 @@ def Initialisation(i,N,dim) :
     
     return X,V,M
 
+Grille=np.zeros((dim,dim))
