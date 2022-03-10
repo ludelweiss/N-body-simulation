@@ -105,3 +105,7 @@ def mouvement(X,V,i,N,dt,T):
         VAL_X[:,:,t]=tab_euler[0]
         VAL_V[:,:,t]=tab_euler[1]   
     return VAL_X, VAL_V
+
+T=10
+dt=1
+print(mouvement(X,V,i,N,dt,T))
