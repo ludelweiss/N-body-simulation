@@ -4,7 +4,7 @@ deux corps A et B de masse 1
 
 Calcul des trajectoires uniquement
 
-Séances 1 à 4
+Séances 1, 2, 3, 4, 6
 
 Auteurs : Ludmilla Allard et Annaëlle Sorce
 """
@@ -60,7 +60,10 @@ def fB(V, t):
     return dV
 
 
-
+'''
+Méthodes d'intégration
+'''
+# Méthode d'intégration Euler
 def euler(X, V, i, N, dt):
     tab_euler_X = X
     tab_euler_V = V
@@ -88,6 +91,13 @@ def euler(X, V, i, N, dt):
     return tab_euler_X , tab_euler_V
 
 
+#Méthode d'intégration Leapfrog
+def leapfrog(X, V, i, N, dt) :
+    tab_lf_X = X
+    tab_lf_V = V
+  
+
+
 
 """
 Creation des tableaux contenants les positions et vitesses
@@ -95,17 +105,14 @@ Creation des tableaux contenants les positions et vitesses
 
 #Fonction pour stocker la position X et la vitesse V en iD de N particules à chaque instant dt jusqu'à T :
 def mouvement(X,V,i,N,dt,T):
+    NT = int(T/dt)
     #tableau de taille (N,i,dt) pour stocker les valeurs finales de X et V :
-    VAL_X=np.zeros((i,N,T))
+    VAL_X=np.zeros((i,N,NT))
     VAL_X[:,:,0]=X
-    VAL_V=np.zeros((i,N,T))
+    VAL_V=np.zeros((i,N,NT))
     VAL_V[:,:,0]=V
-    for t in range(1,T,dt):
+    for it in range(1, NT):
         tab_euler=euler(X,V,i,N,dt)
-        VAL_X[:,:,t]=tab_euler[0]
-        VAL_V[:,:,t]=tab_euler[1]   
+        VAL_X[:,:,it]=tab_euler[0]
+        VAL_V[:,:,it]=tab_euler[1]   
     return VAL_X, VAL_V
-
-T=10
-dt=1
-print(mouvement(X,V,i,N,dt,T))

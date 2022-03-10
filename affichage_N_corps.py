@@ -3,44 +3,39 @@ Modélisation à l'aide d'une interface graphique du problème à N corps
 Un graphique des positions est tracé pour chaque temps dt donné,
 et les graphiques sont assemblés pour obtenir une vidéo du mouvement
 
-Séance 5
+Séances 5, 6
 
 Auteurs : Ludmilla Allard et Annaëlle Sorce
 """
 
 import numpy as np
 import matplolib.pylab as plt
-
-"""
-Création des données
-"""
-
-np.random.seed(3)   #permet de conserver les memes nombres aléatoires à chaque fois
-
-# positions des points :
-x = 4 + np.random.normal(0, 2, 24)
-y = 4 + np.random.normal(0, 2, len(x))
-
-# tailles et couleurs :
-sizes = np.random.uniform(15, 80, len(x))
-colors = np.random.uniform(15, 80, len(x))
+import probleme_a_N_corps as pbN
 
 
-"""
-Tracé du graphique
+#Conditions initiales :
+T= 10
 
-fig, ax = plt.subplots()
+plt.style.use('dark_background')
 
-#ax.scatter(x, y, s=sizes, c=colors, vmin=0, vmax=100)
+# Boucle pour afficher les graphiques à chaque temps
 
-ax.scatter(x, y, vmin=0, vmax=100)
+""" Il faut redéfinir les positions et les couleurs avec les bonnes données
 
-ax.set(xlim=(0, 8), xticks=np.arange(1, 8),
-       ylim=(0, 8), yticks=np.arange(1, 8))
-
-ax.set_xlabel("x")
-ax.set_ylabel("y")
-ax.set_title("Positions des étoiles")
-
-plt.show()
+for t in range(1,T+1) :
+    
+    x = tab_X[:,t-1:t]
+    y = tab_Y[:,t-1:t]
+    
+    colors = np.array((5,4))
+    
+    fig, ax = plt.subplots()
+    
+    ax.scatter(x,y, c = colors)
+    ax.set(xlim=(-2, 8), xticks=np.arange(-2, 8))
+    
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_title("Position des N étoiles")
+    plt.savefig('Mvt-N-part/mvt_N_particules_%03g.png'%t)
 """
