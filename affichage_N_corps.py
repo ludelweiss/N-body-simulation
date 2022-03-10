@@ -3,7 +3,7 @@ Modélisation à l'aide d'une interface graphique du problème à N corps
 Un graphique des positions est tracé pour chaque temps dt donné,
 et les graphiques sont assemblés pour obtenir une vidéo du mouvement
 
-Séance 5
+Séances 5, 6
 
 Auteurs : Ludmilla Allard et Annaëlle Sorce
 """

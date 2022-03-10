@@ -23,8 +23,8 @@ N=pb2.N
 i=pb2.i
 
 #conditions initiales :
-dt=1
-T=10
+dt=0.05
+T=5
 X=np.zeros((i,N))
 X[0,1]=1
 V=np.zeros((i,N))
@@ -43,7 +43,7 @@ plt.style.use('dark_background')
 
 
 # Boucle pour afficher les graphiques à chaque temps
-for t in range(1,T+1) :
+for t in range(1,int(T/dt)+1) :
     
     x = tab_X[:,t-1:t]
     y = tab_Y[:,t-1:t]
@@ -62,3 +62,5 @@ for t in range(1,T+1) :
 
 # code a entrer dans le terminal pour creer video
 #   ffmpeg -r 10 -i mvt_2_particules_00.png -pix_fmt yuv420p -vcodec libx264 -crf 5 -vf scale=1200:-2 mvt_2_particules.avi
+import os
+os.system("ffmpeg -y -r 25 -i Mvt-2-part/mvt_2_particules_%03d.png mvt-2-part.mp4")
