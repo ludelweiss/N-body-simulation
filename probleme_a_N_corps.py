@@ -9,8 +9,8 @@ Auteurs : Ludmilla Allard et Annaëlle Sorce
 import numpy as np
 
 
-N=30   #nombre de particules
-dim=20   #dimension de la grille
+N=6   #nombre de particules
+dim=3   #dimension de la grille
 i=2   #dimension du problème
 
 #Initialisation des coordonnées de positions, de vitesses et de masse
@@ -22,10 +22,9 @@ def Initialisation(i,N,dim) :
     X=np.sort(np.random.uniform(0,dim,N))
     for j in range(0,i-1):
         X=np.vstack((X,np.sort(np.random.uniform(0,dim,N))))
-        print('boucle numéro', i, X)
     
     # Initialisation des vitesses :
-    V=np.sort(np.random.normal(0,0.08*3E8,N))
+    V=np.random.normal(0,0.08*3E8,N)
     for j in range(0,i-1):
         V=np.vstack((V,np.random.normal(0,0.08*3E8,N)))
     
@@ -41,13 +40,27 @@ Vi=Init[1]
 M=Init[2]
 
 # Initialisation de la grille :
-Grille=np.zeros((dim,dim)) 
+Grille=np.zeros((dim,dim,i))
 
-# Calcul du potentiel en chaque point de la grille :
-w=np.zeros(0,i)
-for xg in range (0,dim-1) :
-    for yg in range (0,dim-1):
-        for etoile in range (0,N-1):
-            w+=M[etoile]/()
-        Grille[xg,yg]=sum(M[etoile]/())
+# Remplissage des potentiels de dimension i dans une grille de taille dim*dim :
+
+def grille(Xi,M,dim) :
+    
+    wx=0
+    wy=0
+    for xg in range (0,dim) :
+        for yg in range (0,dim):
+            for etoile in range (0,N):
+                wx = wx + ( M[etoile] / abs( Xi[0,etoile]-xg ) )
+                wy = wy + ( M[etoile] / abs( Xi[1,etoile]-yg ) )
+                print("xg=",xg,"yg=",yg,"etoile=", etoile, "wx=", wx, "wy=",wy)
+            Grille[xg,yg,0]=wx
+            Grille[xg,yg,1]=wy
+            wx=0
+            wy=0
+            print('\n',Grille,'\n')
+                
+    return Grille
+
+grille(Xi,M,dim)
 
