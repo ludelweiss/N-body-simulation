@@ -21,7 +21,7 @@ def Initialisation(i,N,dim) :
     # Initialisation des positions :
     X=np.sort(np.random.uniform(0,dim,N))
     for j in range(0,i-1):
-        X=np.vstack((X,np.sort(np.random.uniform(0,dim,N))))
+        X=np.vstack((X,np.random.uniform(0,dim,N)))
     
     # Initialisation des vitesses :
     V=np.random.normal(0,0.08*3E8,N)
@@ -34,33 +34,30 @@ def Initialisation(i,N,dim) :
     return X,V,M
 
 # Stockage des données initiales du problème :
-Init=Initialisation(i, N, dim)
-Xi=Init[0]
-Vi=Init[1]
-M=Init[2]
+Xi,Vi,M=Initialisation(i, N, dim)
+
 
 # Initialisation de la grille :
-Grille=np.zeros((dim,dim,i))
 
 # Remplissage des potentiels de dimension i dans une grille de taille dim*dim :
 
 def grille(Xi,M,dim) :
-    
-    wx=0
-    wy=0
+    Grille=np.zeros((dim,dim))
     for xg in range (0,dim) :
         for yg in range (0,dim):
             for etoile in range (0,N):
-                wx = wx + ( M[etoile] / abs( Xi[0,etoile]-xg ) )
-                wy = wy + ( M[etoile] / abs( Xi[1,etoile]-yg ) )
-                print("xg=",xg,"yg=",yg,"etoile=", etoile, "wx=", wx, "wy=",wy)
-            Grille[xg,yg,0]=wx
-            Grille[xg,yg,1]=wy
-            wx=0
-            wy=0
+                Grille[xg,yg] = Grille[xg,yg] + M[etoile] / np.sqrt(( Xi[0,etoile]-xg )**2+ ( Xi[1,etoile]-yg )**2)
+                print("xg=",xg,"yg=",yg,"etoile=", etoile)
             print('\n',Grille,'\n')
                 
     return Grille
+
+def accel (Pot, dx, x) :
+    ix = int(x[0]/dx)
+    iy = int(x[1]/dx)
+    ax = ( Pot[ix+1, iy] - Pot[ix, iy] )/dx
+    ay = ( Pot[ix, iy+1] - Pot[ix, iy]  )/dx
+    
 
 grille(Xi,M,dim)
 
