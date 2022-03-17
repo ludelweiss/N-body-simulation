@@ -56,7 +56,7 @@ def grille(Xi,M,nb_pt) :
     return Grille
 
 #grille(Xi,M,nb_pt)
-    
+
 
 # Fonction permettant de calculer le gradient du potentiel en un point donné dans les limites de notre grille de potentiel :
 

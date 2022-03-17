@@ -25,8 +25,8 @@ N=pb2.N
 i=pb2.i
 
 #conditions initiales :
-dt=0.005
-T=2
+dt=0.0005
+T=1
 X=np.zeros((i,N))
 X[0,1]=1
 #V[1,1]=1
@@ -50,10 +50,11 @@ os.mkdir("Mvt-2-part_leapfrog")
 '''
 Boucle pour afficher les graphiques à chaque temps
 '''
+cpt = 0 # décompte pour les numéros des graphiques
 
 #Pour Euler
 for t in range(1, int(T/dt)+1, 2) :
-    
+    cpt += 1
     x = tab_X_euler[:,t-1:t]
     y = tab_Y_euler[:,t-1:t]
     
@@ -67,12 +68,13 @@ for t in range(1, int(T/dt)+1, 2) :
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     ax.set_title("Position des deux particules avec la méthode d'Euler")
-    plt.savefig('Mvt-2-part_euler/mvt_2_particules_%03g.png'%t)
+    plt.savefig('Mvt-2-part_euler/mvt_2_particules_%03g.png'%cpt)
 
 
+cpt = 0
 #Pour Leapfrog
 for t in range(1, int(T/dt)+1, 2) :
-    
+    cpt += 1
     x = tab_X_lf[:,t-1:t]
     y = tab_Y_lf[:,t-1:t]
     
@@ -86,13 +88,13 @@ for t in range(1, int(T/dt)+1, 2) :
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     ax.set_title("Position des deux particules avec la méthode Leapfrog")
-    plt.savefig('Mvt-2-part_leapfrog/mvt_2_particules_%03g.png'%t)
+    plt.savefig('Mvt-2-part_leapfrog/mvt_2_particules_%03g.png'%cpt)
 
 
 # creation des vidéos
 os.system("ffmpeg -y -r 10 -i Mvt-2-part_euler/mvt_2_particules_%03d.png mvt-2-part_euler.mp4")
-#shutil.rmtree("Mvt-2-part_euler")
+shutil.rmtree("Mvt-2-part_euler")
 
 
 os.system("ffmpeg -y -r 10 -i Mvt-2-part_leapfrog/mvt_2_particules_%03d.png mvt-2-part_leapfrog.mp4")
-#shutil.rmtree("Mvt-2-part_leapfrog")
+shutil.rmtree("Mvt-2-part_leapfrog")
