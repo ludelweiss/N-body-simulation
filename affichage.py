@@ -61,7 +61,7 @@ for t in range(1,int(T/dt)+1) :
     fig, ax = plt.subplots()
     
     ax.scatter(x,y, c = colors)
-    ax.set(xlim=(-8, 8), xticks=np.arange(-8, 8))
+    ax.set(xlim=(-8, 8), xticks=np.arange(-8, 8),ylim=(-8,8), yticks=np.arange(-8,8))
     
     ax.set_xlabel("x")
     ax.set_ylabel("y")
@@ -80,7 +80,7 @@ for t in range(1,int(T/dt)+1) :
     fig, ax = plt.subplots()
     
     ax.scatter(x,y, c = colors)
-    ax.set(xlim=(-8, 8), xticks=np.arange(-8, 8))
+    ax.set(xlim=(-8, 8), xticks=np.arange(-8, 8),ylim=(-8,8), yticks=np.arange(-8,8))
     
     ax.set_xlabel("x")
     ax.set_ylabel("y")
