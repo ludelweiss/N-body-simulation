@@ -25,10 +25,11 @@ N=pb2.N
 i=pb2.i
 
 #conditions initiales :
-dt=0.01
-T=1.5
+dt=0.005
+T=2
 X=np.zeros((i,N))
 X[0,1]=1
+#V[1,1]=1
 V=np.zeros((i,N))
 V[1,1]=1
 
@@ -51,7 +52,7 @@ Boucle pour afficher les graphiques à chaque temps
 '''
 
 #Pour Euler
-for t in range(1,int(T/dt)+1) :
+for t in range(1, int(T/dt)+1, 2) :
     
     x = tab_X_euler[:,t-1:t]
     y = tab_Y_euler[:,t-1:t]
@@ -61,7 +62,7 @@ for t in range(1,int(T/dt)+1) :
     fig, ax = plt.subplots()
     
     ax.scatter(x,y, c = colors)
-    ax.set(xlim=(-8, 8), xticks=np.arange(-8, 8),ylim=(-8,8), yticks=np.arange(-8,8))
+    ax.set(xlim=(-5, 5), xticks=np.arange(-5, 5),ylim=(-5,5), yticks=np.arange(-5,5))
     
     ax.set_xlabel("x")
     ax.set_ylabel("y")
@@ -70,7 +71,7 @@ for t in range(1,int(T/dt)+1) :
 
 
 #Pour Leapfrog
-for t in range(1,int(T/dt)+1) :
+for t in range(1, int(T/dt)+1, 2) :
     
     x = tab_X_lf[:,t-1:t]
     y = tab_Y_lf[:,t-1:t]
@@ -80,7 +81,7 @@ for t in range(1,int(T/dt)+1) :
     fig, ax = plt.subplots()
     
     ax.scatter(x,y, c = colors)
-    ax.set(xlim=(-8, 8), xticks=np.arange(-8, 8),ylim=(-8,8), yticks=np.arange(-8,8))
+    ax.set(xlim=(-5, 5), xticks=np.arange(-5, 5),ylim=(-5,5), yticks=np.arange(-5,5))
     
     ax.set_xlabel("x")
     ax.set_ylabel("y")
@@ -90,8 +91,8 @@ for t in range(1,int(T/dt)+1) :
 
 # creation des vidéos
 os.system("ffmpeg -y -r 10 -i Mvt-2-part_euler/mvt_2_particules_%03d.png mvt-2-part_euler.mp4")
-shutil.rmtree("Mvt-2-part_euler")
+#shutil.rmtree("Mvt-2-part_euler")
 
 
 os.system("ffmpeg -y -r 10 -i Mvt-2-part_leapfrog/mvt_2_particules_%03d.png mvt-2-part_leapfrog.mp4")
-shutil.rmtree("Mvt-2-part_leapfrog")
+#shutil.rmtree("Mvt-2-part_leapfrog")

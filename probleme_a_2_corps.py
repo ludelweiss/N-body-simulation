@@ -64,7 +64,7 @@ def leapfrog(X, V, i, N, dt) :
     
     X_apres = X_demi + V_apres*dt/2
     return X_apres , V_apres
-  
+
 
 
 """

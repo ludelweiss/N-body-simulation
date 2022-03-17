@@ -16,7 +16,7 @@ i=2   #dimension du problème
 #Initialisation des coordonnées de positions, de vitesses et de masse
 # de N particules en dimension i réparties sur une grille carrée de dimension dim*dim :
     
-def Initialisation(i,N,dim) :
+def Init(i,N,dim) :
     
     # Initialisation des positions :
     X=np.sort(np.random.uniform(0,dim,N))
@@ -34,7 +34,7 @@ def Initialisation(i,N,dim) :
     return X,V,M
 
 # Stockage des données initiales du problème :
-Xi,Vi,M=Initialisation(i, N, dim)
+Xi,Vi,M=Init(i, N, dim)
 
 
 # Initialisation de la grille :
@@ -43,11 +43,11 @@ Xi,Vi,M=Initialisation(i, N, dim)
 
 def grille(Xi,M,dim) :
     Grille=np.zeros((dim,dim))
-    for xg in range (0,dim) :
-        for yg in range (0,dim):
+    for x_g in range (0,dim) :
+        for y_g in range (0,dim):
             for etoile in range (0,N):
-                Grille[xg,yg] = Grille[xg,yg] + M[etoile] / np.sqrt(( Xi[0,etoile]-xg )**2+ ( Xi[1,etoile]-yg )**2)
-                print("xg=",xg,"yg=",yg,"etoile=", etoile)
+                Grille[x_g, y_g] = Grille[x_g, y_g] + M[etoile] / np.sqrt(( Xi[0,etoile]-x_g )**2+ ( Xi[1,etoile]-y_g )**2)
+                print("x_g=",x_g,"y_g=",y_g,"etoile=", etoile)
             print('\n',Grille,'\n')
                 
     return Grille
