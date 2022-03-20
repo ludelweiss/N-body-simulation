@@ -18,8 +18,8 @@ nb_pt=5  #nombre de points sur une ligne de la grille
 i=2   #dimension du problème
 dx = dim/(nb_pt-1)   #distance entre deux points de la grille
 
-T=5
-dt=1
+T=2
+dt=0.1
 
 #Initialisation des coordonnées de positions, de vitesses et de masse
 # de N particules en dimension i réparties sur une grille carrée de dimension dim*dim :
@@ -70,7 +70,6 @@ def grille(Xi,M,nb_pt) :
 def grad(f, X, etoile, dx) :
    
     coord = X[:,etoile]     # On récupère les coordonnées d'une particule N donnée dans notre tableau de valeurs X (à simplifier dans les boucles)
-    print ('coord=',coord)
     O=np.zeros(i,int)
     for y in range(i):
         O[y] = int( (coord[y]/dx) + (1/2) )    # On trouve le point le plus proche de notre étoile dans la grille
@@ -135,7 +134,7 @@ Y = mvt[0][1]
 '''
 Boucle pour afficher les graphiques à chaque temps
 '''
-
+plt.style.use('dark_background')
 os.mkdir("Mvt-N-part_leapfrog")
 
 cpt = 0 # décompte pour les numéros des graphiques
@@ -146,17 +145,16 @@ for t in range(1, int(T/dt)+1, 2) :
     x = X[:,t-1:t]
     y = Y[:,t-1:t]
     
-    colors = np.array((5,4))
     
     fig, ax = plt.subplots()
     
-    ax.scatter(x,y, M = colors)
-    ax.set(xlim=(0, 20), xticks=np.arange(0, 20),ylim=(0, 20), yticks=np.arange(0, 20))
+    ax.scatter(x,y, c = M)
+    ax.set(xlim=(-10, 10), xticks=np.arange(-10, 10),ylim=(-10, 10), yticks=np.arange(-10, 10))
     
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     ax.set_title("Position des deux particules avec la méthode Leapfrog")
-    plt.savefig('Mvt-2-part_leapfrog/mvt_2_particules_%03g.png'%cpt)
+    plt.savefig('Mvt-N-part_leapfrog/mvt_N_particules_%03g.png'%cpt)
 
 
 
