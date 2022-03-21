@@ -13,7 +13,7 @@ import shutil
 
 
 N=20   #nombre de particules
-dim=1   #dimension géométrique de la grille
+dim=10   #dimension géométrique de la grille
 nb_pt=5  #nombre de points sur une ligne de la grille
 i=2   #dimension du problème
 dx = dim/(nb_pt-1)   #distance entre deux points de la grille
@@ -32,10 +32,12 @@ def Init(i,N,dim) :
         X=np.vstack((X,np.random.uniform(0,dim,N)))
    
     # Initialisation des vitesses :
-    V=np.random.normal(0,0.08*3E8,N)
+    #V=np.random.normal(0,0.08*3E8,N)
+    V=np.random.randint(0,5,N)
     for j in range(0,i-1):
-        V=np.vstack((V,np.random.normal(0,0.08*3E8,N)))
-   
+        #V=np.vstack((V,np.random.normal(0,0.08*3E8,N)))
+        V=np.vstack((V,np.random.randint(0,5,N)))
+        
     # Initialisation des masses :
     M=np.random.uniform(0.07*2E30,300*2E30,N)
    
@@ -44,7 +46,6 @@ def Init(i,N,dim) :
 
 # Stockage des données initiales du problème :
 Xi,Vi,M=Init(i, N, dim)
-print ('Xi=',Xi)
 
 
 # Initialisation de la grille :
@@ -57,8 +58,6 @@ def grille(Xi,M,nb_pt) :
         for y_g in range (0,nb_pt):
             for etoile in range (0,N):
                 Grille[x_g, y_g] = Grille[x_g, y_g] + M[etoile] / np.sqrt(( Xi[0,etoile]-x_g )**2+ ( Xi[1,etoile]-y_g )**2)
-                #print("x_g=",x_g,"y_g=",y_g,"etoile=", etoile)
-            #print('\n',Grille,'\n')
                
     return Grille
 
@@ -149,7 +148,7 @@ for t in range(1, int(T/dt)+1, 2) :
     fig, ax = plt.subplots()
     
     ax.scatter(x,y, c = M)
-    ax.set(xlim=(-10, 10), xticks=np.arange(-10, 10),ylim=(-10, 10), yticks=np.arange(-10, 10))
+    ax.set(xlim=(0, dim), xticks=np.arange(0, dim),ylim=(0, dim), yticks=np.arange(0, dim))
     
     ax.set_xlabel("x")
     ax.set_ylabel("y")
