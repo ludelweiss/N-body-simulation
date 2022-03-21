@@ -14,12 +14,12 @@ import shutil
 
 N=20   #nombre de particules
 dim=10   #dimension géométrique de la grille
-nb_pt=5  #nombre de points sur une ligne de la grille
+nb_pt=10  #nombre de points sur une ligne de la grille
 i=2   #dimension du problème
 dx = dim/(nb_pt-1)   #distance entre deux points de la grille
 
-T=2
-dt=0.1
+T=5
+dt=1
 
 #Initialisation des coordonnées de positions, de vitesses et de masse
 # de N particules en dimension i réparties sur une grille carrée de dimension dim*dim :
@@ -27,16 +27,12 @@ dt=0.1
 def Init(i,N,dim) :
    
     # Initialisation des positions :
-    X=np.sort(np.random.uniform(0,dim,N))
-    for j in range(0,i-1):
-        X=np.vstack((X,np.random.uniform(0,dim,N)))
+    X=np.sort(np.random.uniform(0,dim,(i, N)))
    
     # Initialisation des vitesses :
     #V=np.random.normal(0,0.08*3E8,N)
-    V=np.random.randint(0,5,N)
-    for j in range(0,i-1):
-        #V=np.vstack((V,np.random.normal(0,0.08*3E8,N)))
-        V=np.vstack((V,np.random.randint(0,5,N)))
+    V=np.random.randint(0, 2, (i,N), dtype = int)
+    print(V)
         
     # Initialisation des masses :
     M=np.random.uniform(0.07*2E30,300*2E30,N)
@@ -74,6 +70,7 @@ def grad(f, X, etoile, dx) :
         O[y] = int( (coord[y]/dx) + (1/2) )    # On trouve le point le plus proche de notre étoile dans la grille
    
     if ((O[0] and O[1]) < nb_pt) and ((O[0] and O[1]) >= 0) :
+        print("deb boucle")
     # On approxime notre fonction par un polynôme de second ordre tel que
     # f(x_loc,y_loc) = a + b*x_loc + c*y_loc + d*x_loc*y_loc + e*(x_loc**2) + f*(y_loc**2)
    
@@ -87,7 +84,8 @@ def grad(f, X, etoile, dx) :
        
         x_loc = (coord[0] - O[0]*dx)/dx
         y_loc = (coord[1] - O[1]*dx)/dx
-   
+        
+        print("fin boucle")
         # On renvoie les valeurs du gradient :
         return ( b + 2*e*x_loc + d*y_loc , c+2*f*y_loc+d*x_loc )
    
