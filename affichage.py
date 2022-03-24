@@ -23,28 +23,77 @@ Cas simple à 2 particules
 N=pb2.N
 #nb de coordonnées :
 i=pb2.i
+#masses :
+m = pb2.m
 
 #conditions initiales :
 dt=0.0005
 T=1
 X=np.zeros((i,N))
 X[0,1]=1
-#V[1,1]=1
 V=np.zeros((i,N))
 V[1,1]=1
 
-# Création des tableaux contenants les positions
+# Création des tableaux contenants les positions et les vitesses
 mvt_euler = pb2.mouvement_euler(X, V, i, N, dt, T)
 mvt_lf = pb2.mouvement_lf(X, V, i, N, dt, T)
 
-tab_X_euler = mvt_euler[0][0]   #extraction du tableau des x
-tab_Y_euler = mvt_euler[0][1]   #extraction du tableau des y
+# Euler
+X_euler = mvt_euler[0][0]   #extraction du tableau des x
+Y_euler = mvt_euler[0][1]   #extraction du tableau des y
 
-tab_X_lf = mvt_lf[0][0]
-tab_Y_lf = mvt_lf[0][1]
+VX_euler = mvt_euler[1][0]
+VY_euler = mvt_euler[1][1]
+
+# Leapfrog
+X_lf = mvt_lf[0][0]
+Y_lf = mvt_lf[0][1]
+
+VX_lf = mvt_lf[1][0]
+VY_lf = mvt_lf[1][1]
 
 plt.style.use('dark_background')
 
+"""
+Etude de la conservation de l'énergie
+"""
+
+def energie(X, Y, VX, VY):
+    E = []
+    E_p2 = 0
+    for p1 in range(N) :
+        for p2 in range(p1) :
+            E_p2 = m[p1]*m[p2] / 2 * np.sqrt((X[p2, :]-X[p1, :])**2 + (Y[p2, :]-Y[p1, :])**2
+                    + m[p2] * (np.sqrt((VX[p2, :]-VX[p1, :])**2+ (VY[p2, :]-VY[p1, :])**2))**2 /2)
+            #E_p = m[p1]*m[p2] / 2 * np.sqrt((X[:,p2]-X[:,p1])**2 + (Y[:,p2]-Y[:,p1])**2)
+            #E_c = m[p2] * (np.sqrt((VX[:,p2]-VX[:,p1])**2 + (VY[:,p2]-VY[:,p1])**2))**2 /2
+            E = np.vstack(E_p2)
+    return(E)
+
+energie_euler = energie(X_euler, Y_euler, VX_euler, VY_euler)
+energie_lf = energie(X_lf, Y_lf, VX_lf, VY_lf)
+
+energie = energie_euler - energie_lf
+
+'''
+Tracé comparatif des conservations d'énergie
+'''
+x = np.linspace(0, np.amax(energie_euler), 2000)
+plt.plot(x, energie_euler, label = "énergie avec Euler")
+plt.plot(x, energie_lf, label = "énergie avec Leapfrog")
+plt.legend()
+plt.savefig("Comparatif-énergies-2-corps.pdf")
+
+'''
+plt.plot(tab_x_rk2,tab_y_rk2,label="Methode Runge-Kutta avec eta = 0")
+plt.xlabel("x")
+plt.ylabel("y")
+plt.legend()
+plt.savefig("balistique1_rk2.pdf")
+plt.show()
+'''
+
+'''
 # supprime les dossiers contenant les images s'ils existent déjà
 try : 
     shutil.rmtree("Mvt-2-part_euler")
@@ -57,16 +106,18 @@ except : pass
 os.mkdir("Mvt-2-part_euler")
 os.mkdir("Mvt-2-part_leapfrog")
 
-'''
+"""
 Boucle pour afficher les graphiques à chaque temps
-'''
+"""
+
+
 cpt = 0 # décompte pour les numéros des graphiques
 
 #Pour Euler
 for t in range(1, int(T/dt)+1, 2) :
     cpt += 1
-    x = tab_X_euler[:,t-1:t]
-    y = tab_Y_euler[:,t-1:t]
+    x = X_euler[:,t-1:t]
+    y = Y_euler[:,t-1:t]
     
     colors = np.array((5,4))
     
@@ -85,8 +136,8 @@ cpt = 0
 #Pour Leapfrog
 for t in range(1, int(T/dt)+1, 2) :
     cpt += 1
-    x = tab_X_lf[:,t-1:t]
-    y = tab_Y_lf[:,t-1:t]
+    x = X_lf[:,t-1:t]
+    y = Y_lf[:,t-1:t]
     
     colors = np.array((5,4))
     
@@ -108,3 +159,5 @@ shutil.rmtree("Mvt-2-part_euler")
 
 os.system("ffmpeg -y -r 10 -i Mvt-2-part_leapfrog/mvt_2_particules_%03d.png mvt-2-part_leapfrog.mp4")
 shutil.rmtree("Mvt-2-part_leapfrog")
+
+'''
