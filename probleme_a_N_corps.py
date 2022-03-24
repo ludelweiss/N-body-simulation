@@ -11,16 +11,18 @@ import matplotlib.pylab as plt
 import matplotlib.cm as cm
 import os
 import shutil
+import numba as nb
 
 
 N=300  #nombre de particules
 dim=20   #dimension géométrique de la grille
-nb_pt=10  #nombre de points sur une ligne de la grille
+nb_pt=20  #nombre de points sur une ligne de la grille
 i=2   #dimension du problème
 dx = dim/(nb_pt-1)   #distance entre deux points de la grille
+# on définit G=1
 
-T=8
-dt=0.01
+T=0.5
+dt=0.0002
 
 #Initialisation des coordonnées de positions, de vitesses et de masse
 # de N particules en dimension i réparties sur une grille carrée de dimension dim*dim :
@@ -28,14 +30,16 @@ dt=0.01
 def Init(i,N,dim) :
    
     # Initialisation des positions :
-    X=np.random.normal(dim/2, dim/8, (i, N))
-    
-    # Initialisation des vitesses :
-    V=np.random.normal(0, 0.2, (i,N))
-    #V=np.random.randint(0, 2, (i,N), dtype = int)
+    X=np.random.normal(dim/4, dim/20, (i, N))
     
     # Initialisation des masses :
     M=np.random.uniform(0.2 ,10, N)
+    
+    # Initialisation des vitesses :
+    V=np.random.normal(0, 1., (i,N))
+    V_cm = np.sum( M[np.newaxis,:]*V[:,:], axis=1) / np.sum( M )
+    V -= V_cm[:,np.newaxis]
+    
     return X,V,M
 
 # Stockage des données initiales du problème :
@@ -45,29 +49,33 @@ Xi,Vi,M=Init(i, N, dim)
 # Initialisation de la grille :
 
 # Remplissage des potentiels de dimension i dans une grille de taille dim*dim :
-
+@nb.njit
 def grille(Xi,M,nb_pt, dx) :
     Grille=np.zeros((nb_pt,nb_pt))
     for x_g in range (nb_pt) :
         for y_g in range (nb_pt):
             for etoile in range (0,N):
                 Grille[x_g, y_g] -= M[etoile] / np.sqrt(( Xi[0,etoile]-x_g*dx )**2+ ( Xi[1,etoile]-y_g*dx )**2)
-               
-    return Grille
+    #X_cm = np.sum( M[np.newaxis,:]*Xi[:,:], axis=1) / np.sum( M )     # coordonnées du centre de masse
+    X_cm=np.zeros(2)
+    X_cm[0]  = np.sum(M*Xi[0,:]) / np.sum( M )     # coordonnées du centre de masse           
+    X_cm[1]  = np.sum(M*Xi[1,:]) / np.sum( M )     # coordonnées du centre de masse           
+    return Grille,X_cm
 
 #grille(Xi,M,nb_pt)
 
 
 # Fonction permettant de calculer le gradient du potentiel en un point donné dans les limites de notre grille de potentiel :
-
-def grad(f, X, etoile, dx) :
+#@nb.njit
+def grad(f, X_cm, X, etoile, dx) :
    
     coord = X[:,etoile]     # On récupère les coordonnées d'une particule N donnée dans notre tableau de valeurs X (à simplifier dans les boucles)
-    O=np.zeros(i,int)
+    O=np.zeros(i,dtype=np.int64)
     for y in range(i):
         O[y] = int( (coord[y]/dx) + (1/2) )    # On trouve le point le plus proche de notre étoile dans la grille
    
     if 0 < O[0] < nb_pt-1 and 0 < O[1] < nb_pt-1 :
+        
         '''
         On approxime notre fonction par un polynôme de second ordre tel que :
         f(x_loc,y_loc) = a + b*x_loc + c*y_loc + d*x_loc*y_loc + e*(x_loc**2) + f*(y_loc**2)
@@ -88,19 +96,21 @@ def grad(f, X, etoile, dx) :
         grad = np.array((b + 2*e*x_loc + d*y_loc , c+2*f*y_loc+d*x_loc))
         
     else :
-        grad = np.zeros(i)  # ok si la grille est suffisamment fine (plus propre = faire comme pour l'extérieur avec masse tot et centre de masse)
+        grad = np.sum( M ) / ( np.sum( (coord - X_cm )**2) )**1.5 * (coord-X_cm)  #gradient du potentiel calculé en fonction de la distance par rapport au centre de masse
+
+        
 
     return grad
  
-
+    #V=np.random.randint(0, 2, (i,N), dtype = int)
 #Méthode d'intégration Leapfrog
 def leapfrog(X, V, i, N, dt) :
     X_demi = X + V*dt/2
-    Grille = grille(X_demi, M, nb_pt, dx)
+    Grille,X_cm = grille(X_demi, M, nb_pt, dx)
    
     dV = np.zeros_like(V)
     for n1 in range(N) :
-        dV[:,n1] = -dt*grad(Grille, X_demi, n1, dx)
+        dV[:,n1] = -dt*grad(Grille, X_cm, X_demi, n1, dx)
     
     V_apres = V + dV
     
@@ -127,8 +137,10 @@ X = mvt[0][0]
 Y = mvt[0][1]
 
 
+
+
 '''
-Boucle pour afficher les graphiques à chaque temps
+#Boucle pour afficher les graphiques à chaque temps
 '''
 plt.style.use('dark_background')
 
@@ -143,7 +155,7 @@ cpt = 0 # décompte pour les numéros des graphiques
 xgrille = np.linspace(0,dim,nb_pt)
 color_max = 2*N
 
-for t in range(1, int(T/dt)+1, 2) :
+for t in range(1, int(T/dt)+1, 10) :
     
     x = X[:,t-1]
     y = Y[:,t-1]
@@ -152,15 +164,16 @@ for t in range(1, int(T/dt)+1, 2) :
     fig, ax = plt.subplots()
     
     ax.scatter(x,y, s = M, c= M, zorder = 3)
-    ax.set(xlim=(0, dim), xticks=np.arange(0, dim+1),ylim=(0, dim), yticks=np.arange(0, dim+1))
+    ax.set(xlim=(-dim, dim*2), xticks=np.arange(0, dim+1),ylim=(-dim, dim*2), yticks=np.arange(0, dim+1))
     
     # affichage de la grille de potentiel
-    ax.pcolormesh(xgrille, xgrille, grille(mvt[0][:,:,t-1], M, nb_pt, dx), cmap = cm.Greys, zorder = 2, shading = 'nearest', vmin = -color_max, vmax = color_max)
-    
+    Grille, X_cm = grille(mvt[0][:,:,t-1], M, nb_pt, dx)
+    ax.pcolormesh(xgrille, xgrille, Grille, cmap = cm.Greys, zorder = 2, shading = 'nearest', vmin = -color_max, vmax = color_max)
+    ax.plot(X_cm[0], X_cm[1], 'rx', zorder=3)
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     ax.set_title("Position des deux particules avec la méthode Leapfrog")
-    plt.savefig('Mvt-N-part_leapfrog/mvt_N_particules_%03g.png'%cpt)
+    plt.savefig('Mvt-N-part_leapfrog/mvt_N_particules_%03g.png'%cpt,dpi=150)
     cpt += 1
 
 
@@ -171,15 +184,16 @@ fig, ax = plt.subplots()
     
 ax.scatter(x,y, c = M, zorder = 3)
 ax.set(xlim=(0, dim), xticks=np.arange(0, dim+1),ylim=(0, dim), yticks=np.arange(0, dim+1))
-
-ax.pcolormesh(xgrille, xgrille, grille(mvt[0][:,:,int(T/dt)], M, nb_pt, dx), cmap = cm.Greys, zorder = 2, shading = 'nearest', vmin = -color_max, vmax = color_max)
+Grille, X_cm = grille(mvt[0][:,:,int(T/dt)], M, nb_pt, dx)
+ax.pcolormesh(xgrille, xgrille, Grille, cmap = cm.Greys, zorder = 2, shading = 'nearest', vmin = -color_max, vmax = color_max)
 
 ax.set_xlabel("x")
 ax.set_ylabel("y")
 ax.set_title("Position des deux particules avec la méthode Leapfrog")
-plt.savefig('Mvt-N-part_leapfrog/mvt_N_particules_%03g.png'%(cpt+1))
+plt.savefig('Mvt-N-part_leapfrog/mvt_N_particules_%03g.png'%(cpt+1),dpi=150)
 
 
 # creation des vidéos
 os.system("ffmpeg -y -r 10 -i Mvt-N-part_leapfrog/mvt_N_particules_%03d.png mvt-N-part_leapfrog.mp4")
 shutil.rmtree("Mvt-N-part_leapfrog")
+
