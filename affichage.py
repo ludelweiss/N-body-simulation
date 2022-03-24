@@ -44,6 +44,16 @@ tab_X_lf = mvt_lf[0][0]
 tab_Y_lf = mvt_lf[0][1]
 
 plt.style.use('dark_background')
+
+# supprime les dossiers contenant les images s'ils existent déjà
+try : 
+    shutil.rmtree("Mvt-2-part_euler")
+except : pass
+try : 
+    shutil.rmtree("Mvt-2-part_leapfrog")
+except : pass
+
+# Creation des dossiers contenant les images
 os.mkdir("Mvt-2-part_euler")
 os.mkdir("Mvt-2-part_leapfrog")
 

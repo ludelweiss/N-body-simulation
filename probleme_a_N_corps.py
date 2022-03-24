@@ -13,13 +13,13 @@ import os
 import shutil
 
 
-N=150  #nombre de particules
-dim=10   #dimension géométrique de la grille
-nb_pt=8  #nombre de points sur une ligne de la grille
+N=300  #nombre de particules
+dim=20   #dimension géométrique de la grille
+nb_pt=10  #nombre de points sur une ligne de la grille
 i=2   #dimension du problème
 dx = dim/(nb_pt-1)   #distance entre deux points de la grille
 
-T=4
+T=8
 dt=0.01
 
 #Initialisation des coordonnées de positions, de vitesses et de masse
@@ -28,7 +28,7 @@ dt=0.01
 def Init(i,N,dim) :
    
     # Initialisation des positions :
-    X=np.random.normal(dim/2, dim/6, (i, N))
+    X=np.random.normal(dim/2, dim/8, (i, N))
     
     # Initialisation des vitesses :
     V=np.random.normal(0, 0.2, (i,N))
@@ -88,9 +88,8 @@ def grad(f, X, etoile, dx) :
         grad = np.array((b + 2*e*x_loc + d*y_loc , c+2*f*y_loc+d*x_loc))
         
     else :
-        grad = np.zeros(i)
+        grad = np.zeros(i)  # ok si la grille est suffisamment fine (plus propre = faire comme pour l'extérieur avec masse tot et centre de masse)
 
-    
     return grad
  
 
@@ -132,9 +131,12 @@ Y = mvt[0][1]
 Boucle pour afficher les graphiques à chaque temps
 '''
 plt.style.use('dark_background')
+
+# supprime le document contenant les images s'il existe déjà
 try : 
     shutil.rmtree("Mvt-N-part_leapfrog")
 except : pass
+# Creation du dossier contenant les images
 os.mkdir("Mvt-N-part_leapfrog")
 
 cpt = 0 # décompte pour les numéros des graphiques
@@ -149,7 +151,7 @@ for t in range(1, int(T/dt)+1, 2) :
     
     fig, ax = plt.subplots()
     
-    ax.scatter(x,y, c = M, zorder = 3)
+    ax.scatter(x,y, s = M, c= M, zorder = 3)
     ax.set(xlim=(0, dim), xticks=np.arange(0, dim+1),ylim=(0, dim), yticks=np.arange(0, dim+1))
     
     # affichage de la grille de potentiel
