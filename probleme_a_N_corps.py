@@ -13,7 +13,7 @@ import os
 import shutil
 
 
-N=80  #nombre de particules
+N=150  #nombre de particules
 dim=10   #dimension géométrique de la grille
 nb_pt=8  #nombre de points sur une ligne de la grille
 i=2   #dimension du problème
@@ -28,14 +28,14 @@ dt=0.01
 def Init(i,N,dim) :
    
     # Initialisation des positions :
-    X=np.random.uniform(0.2*dim,0.8*dim,(i, N))
+    X=np.random.normal(dim/2, dim/6, (i, N))
     
     # Initialisation des vitesses :
-    V=np.random.normal(0,0.1,(i,N))
+    V=np.random.normal(0, 0.2, (i,N))
     #V=np.random.randint(0, 2, (i,N), dtype = int)
     
     # Initialisation des masses :
-    M=np.random.uniform(0.2,10,N)
+    M=np.random.uniform(0.2 ,10, N)
     return X,V,M
 
 # Stockage des données initiales du problème :
