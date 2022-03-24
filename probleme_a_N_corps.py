@@ -14,7 +14,7 @@ import shutil
 
 N=20   #nombre de particules
 dim=10   #dimension géométrique de la grille
-nb_pt=10  #nombre de points sur une ligne de la grille
+nb_pt=8  #nombre de points sur une ligne de la grille
 i=2   #dimension du problème
 dx = dim/(nb_pt-1)   #distance entre deux points de la grille
 
@@ -30,15 +30,12 @@ def Init(i,N,dim) :
     X=np.sort(np.random.uniform(0,dim,(i, N)))
    
     # Initialisation des vitesses :
-    #V=np.random.normal(0,0.08*3E8,N)
-    V=np.random.randint(0, 2, (i,N), dtype = int)
-    print(V)
+    V=np.random.normal(0,0.5,(i,N))
+    #V=np.random.randint(0, 2, (i,N), dtype = int)
         
     # Initialisation des masses :
     M=np.random.uniform(0.07*2E30,300*2E30,N)
-   
     return X,V,M
-#print (Init(i,N,dim))
 
 # Stockage des données initiales du problème :
 Xi,Vi,M=Init(i, N, dim)
@@ -50,8 +47,8 @@ Xi,Vi,M=Init(i, N, dim)
 
 def grille(Xi,M,nb_pt) :
     Grille=np.zeros((nb_pt,nb_pt))
-    for x_g in range (0,nb_pt) :
-        for y_g in range (0,nb_pt):
+    for x_g in range (nb_pt) :
+        for y_g in range (nb_pt):
             for etoile in range (0,N):
                 Grille[x_g, y_g] = Grille[x_g, y_g] + M[etoile] / np.sqrt(( Xi[0,etoile]-x_g )**2+ ( Xi[1,etoile]-y_g )**2)
                
@@ -69,8 +66,7 @@ def grad(f, X, etoile, dx) :
     for y in range(i):
         O[y] = int( (coord[y]/dx) + (1/2) )    # On trouve le point le plus proche de notre étoile dans la grille
    
-    if ((O[0] and O[1]) < nb_pt) and ((O[0] and O[1]) >= 0) :
-        print("deb boucle")
+    if ((O[0] and O[1]) < nb_pt-1) and ((O[0] and O[1]) > 0) :
     # On approxime notre fonction par un polynôme de second ordre tel que
     # f(x_loc,y_loc) = a + b*x_loc + c*y_loc + d*x_loc*y_loc + e*(x_loc**2) + f*(y_loc**2)
    
@@ -85,13 +81,14 @@ def grad(f, X, etoile, dx) :
         x_loc = (coord[0] - O[0]*dx)/dx
         y_loc = (coord[1] - O[1]*dx)/dx
         
-        print("fin boucle")
         # On renvoie les valeurs du gradient :
-        return ( b + 2*e*x_loc + d*y_loc , c+2*f*y_loc+d*x_loc )
-   
+        grad = np.array((b + 2*e*x_loc + d*y_loc , c+2*f*y_loc+d*x_loc))
+        
     else :
         grad = np.zeros(i)
-        return grad
+
+    
+    return grad
  
 
 #Méthode d'intégration Leapfrog
@@ -146,7 +143,7 @@ for t in range(1, int(T/dt)+1, 2) :
     fig, ax = plt.subplots()
     
     ax.scatter(x,y, c = M)
-    ax.set(xlim=(0, dim), xticks=np.arange(0, dim),ylim=(0, dim), yticks=np.arange(0, dim))
+    ax.set(xlim=(0, dim), xticks=np.arange(0, dim+1),ylim=(0, dim), yticks=np.arange(0, dim+1))
     
     ax.set_xlabel("x")
     ax.set_ylabel("y")
