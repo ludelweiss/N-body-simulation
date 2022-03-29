@@ -21,7 +21,7 @@ i=2   #dimension du problème
 dx = dim/(nb_pt-1)   #distance entre deux points de la grille
 # on définit G=1
 
-T=0.5
+T=0.1
 dt=0.0002
 
 #Initialisation des coordonnées de positions, de vitesses et de masse
@@ -164,7 +164,7 @@ for t in range(1, int(T/dt)+1, 10) :
     fig, ax = plt.subplots()
     
     ax.scatter(x,y, s = M, c= M, zorder = 3)
-    ax.set(xlim=(-dim, dim*2), xticks=np.arange(0, dim+1),ylim=(-dim, dim*2), yticks=np.arange(0, dim+1))
+    ax.set(xlim=(-dim, dim*2), xticks=np.arange(-dim, dim*2),ylim=(-dim, dim*2), yticks=np.arange(-dim, dim*2))
     
     # affichage de la grille de potentiel
     Grille, X_cm = grille(mvt[0][:,:,t-1], M, nb_pt, dx)
@@ -194,6 +194,6 @@ plt.savefig('Mvt-N-part_leapfrog/mvt_N_particules_%03g.png'%(cpt+1),dpi=150)
 
 
 # creation des vidéos
-os.system("ffmpeg -y -r 10 -i Mvt-N-part_leapfrog/mvt_N_particules_%03d.png mvt-N-part_leapfrog.mp4")
+os.system("ffmpeg -y -r 10 -i -crf 18 Mvt-N-part_leapfrog/mvt_N_particules_%03d.png mvt-N-part_leapfrog.mp4")
 shutil.rmtree("Mvt-N-part_leapfrog")
 
