@@ -25,7 +25,7 @@ X=np.zeros((i,N))
 X[0,1]=1    #positions initiales des particules A et B
 
 V=np.zeros((i,N))
-V[0,1]=1    #vitesse initiale des particules A et B
+V[1,1]=1    #vitesse initiale des particules A et B
 
 # masses :
 m = np.ones(N)
@@ -80,7 +80,7 @@ def mouvement_euler(X,V,i,N,dt,T):
     VAL_V=np.zeros((i,N,NT))
     VAL_V[:,:,0]=V
     for it in range(1, NT):
-        X,V=euler(X,V,i,N,T/it)
+        X,V=euler(X,V,i,N,dt)
         VAL_X[:,:,it]=X
         VAL_V[:,:,it]=V 
     return VAL_X, VAL_V
@@ -94,7 +94,7 @@ def mouvement_lf(X,V,i,N,dt,T):
     VAL_V=np.zeros((i,N,NT))
     VAL_V[:,:,0]=V
     for it in range(1, NT):
-        X,V=leapfrog(X,V,i,N,T/it)
+        X,V=leapfrog(X,V,i,N,dt)
         VAL_X[:,:,it]=X
         VAL_V[:,:,it]=V
     return VAL_X, VAL_V
