@@ -16,27 +16,29 @@ import numba as nb
 
 N=300  #nombre de particules
 dim=20   #dimension géométrique de la grille
-nb_pt=20  #nombre de points sur une ligne de la grille
+nb_pt=30  #nombre de points sur une ligne de la grille
 i=2   #dimension du problème
 dx = dim/(nb_pt-1)   #distance entre deux points de la grille
 # on définit G=1
 
-T=0.1
-dt=0.0002
+T=1
+dt=0.0001
+dt_video = 0.005
 
 #Initialisation des coordonnées de positions, de vitesses et de masse
 # de N particules en dimension i réparties sur une grille carrée de dimension dim*dim :
-   
+np.random.seed(1451451421)
+    
 def Init(i,N,dim) :
    
     # Initialisation des positions :
-    X=np.random.normal(dim/4, dim/20, (i, N))
+    X=np.random.normal(dim/2, dim/20, (i, N))
     
     # Initialisation des masses :
     M=np.random.uniform(0.2 ,10, N)
     
     # Initialisation des vitesses :
-    V=np.random.normal(0, 1., (i,N))
+    V=np.random.normal(0, 10., (i,N))
     V_cm = np.sum( M[np.newaxis,:]*V[:,:], axis=1) / np.sum( M )
     V -= V_cm[:,np.newaxis]
     
@@ -55,18 +57,20 @@ def grille(Xi,M,nb_pt, dx) :
     for x_g in range (nb_pt) :
         for y_g in range (nb_pt):
             for etoile in range (0,N):
-                Grille[x_g, y_g] -= M[etoile] / np.sqrt(( Xi[0,etoile]-x_g*dx )**2+ ( Xi[1,etoile]-y_g*dx )**2)
+                r = np.sqrt(( Xi[0,etoile]-x_g*dx )**2+ ( Xi[1,etoile]-y_g*dx )**2)
+                if r > dx/5 :
+                    Grille[x_g, y_g] -= M[etoile] / r
     #X_cm = np.sum( M[np.newaxis,:]*Xi[:,:], axis=1) / np.sum( M )     # coordonnées du centre de masse
     X_cm=np.zeros(2)
     X_cm[0]  = np.sum(M*Xi[0,:]) / np.sum( M )     # coordonnées du centre de masse           
     X_cm[1]  = np.sum(M*Xi[1,:]) / np.sum( M )     # coordonnées du centre de masse           
     return Grille,X_cm
 
-#grille(Xi,M,nb_pt)
+
 
 
 # Fonction permettant de calculer le gradient du potentiel en un point donné dans les limites de notre grille de potentiel :
-#@nb.njit
+@nb.njit
 def grad(f, X_cm, X, etoile, dx) :
    
     coord = X[:,etoile]     # On récupère les coordonnées d'une particule N donnée dans notre tableau de valeurs X (à simplifier dans les boucles)
@@ -75,19 +79,18 @@ def grad(f, X_cm, X, etoile, dx) :
         O[y] = int( (coord[y]/dx) + (1/2) )    # On trouve le point le plus proche de notre étoile dans la grille
    
     if 0 < O[0] < nb_pt-1 and 0 < O[1] < nb_pt-1 :
-        
         '''
         On approxime notre fonction par un polynôme de second ordre tel que :
         f(x_loc,y_loc) = a + b*x_loc + c*y_loc + d*x_loc*y_loc + e*(x_loc**2) + f*(y_loc**2)
         '''
-   
+        
         # Calcul des coef du polynôme :
         a = f[ O[0] , O[1] ]
         b = 0.5 * ( f[ O[0]+1 , O[1] ] - f[ O[0]-1 , O[1] ] )
         c = 0.5 * ( f[ O[0] , O[1]+1 ] - f[ O[0] , O[1]-1 ] )
-        d = 0.25 * ( f[ O[0]+1 , O[1]+1 ] + f[ O[0]-1 , O[1]-1 ] ) - ( f[ O[0]-1 , O[1]+1 ] + f[ O[0]+1 , O[1]-1 ] )
-        e = f[ O[0]-1 , O[1] ] + f[ O[0]+1 , O[1] ] - 2 * f[ O[0] , O[1] ]
-        f = f[ O[0] , O[1]-1 ] + f[ O[0] , O[1]+1 ] - 2 * f[ O[0] , O[1] ]
+        d = 0.25 * (( f[ O[0]+1 , O[1]+1 ] + f[ O[0]-1 , O[1]-1 ] ) - ( f[ O[0]-1 , O[1]+1 ] + f[ O[0]+1 , O[1]-1 ] ))
+        e = 0.5 * (f[ O[0]-1 , O[1] ] + f[ O[0]+1 , O[1] ]) - f[ O[0] , O[1] ]
+        f = 0.5 * (f[ O[0] , O[1]-1 ] + f[ O[0] , O[1]+1 ]) - f[ O[0] , O[1] ]
        
         x_loc = (coord[0] - O[0]*dx)/dx
         y_loc = (coord[1] - O[1]*dx)/dx
@@ -102,11 +105,15 @@ def grad(f, X_cm, X, etoile, dx) :
 
     return grad
  
-    #V=np.random.randint(0, 2, (i,N), dtype = int)
+
+grille_fixe = grille(Xi,M,nb_pt, dx)
+
 #Méthode d'intégration Leapfrog
+@nb.njit
 def leapfrog(X, V, i, N, dt) :
     X_demi = X + V*dt/2
     Grille,X_cm = grille(X_demi, M, nb_pt, dx)
+    #Grille, X_cm = grille_fixe
    
     dV = np.zeros_like(V)
     for n1 in range(N) :
@@ -135,8 +142,29 @@ def mouvement_lf(i,N,dt,T):
 mvt = mouvement_lf(i,N,dt,T)
 X = mvt[0][0]
 Y = mvt[0][1]
+VX = mvt[1][0]
+VY = mvt[1][1]
 
+'''
+Calcul de la conservation de l'énergie
+'''
 
+def energie(X, Y, VX, VY):
+    E = np.zeros(X.shape[1])
+    for p1 in range(N) :
+        E += M[p1] * (VX[p1, :]**2 + VY[p1, :]**2) /2
+        for p2 in range(p1) :
+            E -= M[p1]*M[p2] / np.sqrt((X[p2, :]-X[p1, :])**2 + (Y[p2, :]-Y[p1, :])**2)
+    return(E)
+
+Energie = energie(X, Y, VX, VY)
+
+#Tracé comparatif des conservations d'énergie
+x = np.linspace(0, T, int(T/dt)+1)
+plt.plot(x, Energie, label = "énergie avec Leapfrog")
+plt.legend()
+plt.title("Comparatif des énergies à N corps")
+plt.savefig("Comparatif-énergies-N-corps.pdf")
 
 
 '''
@@ -155,7 +183,8 @@ cpt = 0 # décompte pour les numéros des graphiques
 xgrille = np.linspace(0,dim,nb_pt)
 color_max = 2*N
 
-for t in range(1, int(T/dt)+1, 10) :
+
+for t in range(1, int(T/dt)+1, int(dt_video/dt)) :
     
     x = X[:,t-1]
     y = Y[:,t-1]
@@ -164,7 +193,7 @@ for t in range(1, int(T/dt)+1, 10) :
     fig, ax = plt.subplots()
     
     ax.scatter(x,y, s = M, c= M, zorder = 3)
-    ax.set(xlim=(-dim, dim*2), xticks=np.arange(-dim, dim*2),ylim=(-dim, dim*2), yticks=np.arange(-dim, dim*2))
+    ax.set(xlim=(-dim/4, dim*1.25), ylim=(-dim/4, dim*1.25))
     
     # affichage de la grille de potentiel
     Grille, X_cm = grille(mvt[0][:,:,t-1], M, nb_pt, dx)
@@ -172,7 +201,7 @@ for t in range(1, int(T/dt)+1, 10) :
     ax.plot(X_cm[0], X_cm[1], 'rx', zorder=3)
     ax.set_xlabel("x")
     ax.set_ylabel("y")
-    ax.set_title("Position des deux particules avec la méthode Leapfrog")
+    ax.set_title(f"dt={dt}")
     plt.savefig('Mvt-N-part_leapfrog/mvt_N_particules_%03g.png'%cpt,dpi=150)
     cpt += 1
 
@@ -183,17 +212,17 @@ y = Y[:,int(T/dt)]
 fig, ax = plt.subplots()
     
 ax.scatter(x,y, c = M, zorder = 3)
-ax.set(xlim=(0, dim), xticks=np.arange(0, dim+1),ylim=(0, dim), yticks=np.arange(0, dim+1))
+ax.set(xlim=(0, dim), ylim=(0, dim))
 Grille, X_cm = grille(mvt[0][:,:,int(T/dt)], M, nb_pt, dx)
 ax.pcolormesh(xgrille, xgrille, Grille, cmap = cm.Greys, zorder = 2, shading = 'nearest', vmin = -color_max, vmax = color_max)
 
 ax.set_xlabel("x")
 ax.set_ylabel("y")
-ax.set_title("Position des deux particules avec la méthode Leapfrog")
+ax.set_title(f"dt={dt}")
 plt.savefig('Mvt-N-part_leapfrog/mvt_N_particules_%03g.png'%(cpt+1),dpi=150)
 
 
 # creation des vidéos
-os.system("ffmpeg -y -r 10 -i -crf 18 Mvt-N-part_leapfrog/mvt_N_particules_%03d.png mvt-N-part_leapfrog.mp4")
+os.system("ffmpeg -y -r 10 -i Mvt-N-part_leapfrog/mvt_N_particules_%03d.png mvt-N-part_leapfrog.mp4")
 shutil.rmtree("Mvt-N-part_leapfrog")
 

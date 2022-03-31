@@ -69,10 +69,7 @@ energie_euler = energie(X_euler, Y_euler, VX_euler, VY_euler)
 energie_lf = energie(X_lf, Y_lf, VX_lf, VY_lf)
 
 
-'''
-Tracé comparatif des conservations d'énergie
-'''
-
+#Tracé comparatif des conservations d'énergie
 plt.plot(energie_euler, label = "énergie avec Euler")
 plt.plot(energie_lf, label = "énergie avec Leapfrog")
 plt.legend()
