@@ -209,8 +209,8 @@ fig, ax = plt.subplots()
     
 ax.scatter(x,y, c = M, zorder = 3)
 ax.set(xlim=(0, dim), ylim=(0, dim))
-#Grille, X_cm = grille(mvt[0][:,:,int(T/dt)], M, nb_pt, dx)
-X_cm, Grille = grille(mvt[0][:,:,int(T/dt)], M, nb_pt, dx)
+Grille, X_cm = grille(mvt[0][:,:,int(T/dt)], M, nb_pt, dx)
+#X_cm, Grille = grille(mvt[0][:,:,int(T/dt)], M, nb_pt, dx)
 ax.pcolormesh(xgrille, xgrille, Grille, cmap = cm.Greys, zorder = 2, shading = 'nearest', vmin = -color_max, vmax = color_max)
 
 ax.set_xlabel("x")
