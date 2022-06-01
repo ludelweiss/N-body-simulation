@@ -193,7 +193,7 @@ for t in range(1, int(T/dt)+1, int(dt_video/dt)) :
     
     # affichage de la grille de potentiel
     Grille, X_cm = grille(mvt[0][:,:,t-1], M, nb_pt, dx)
-    ax.pcolormesh(xgrille, xgrille, Grille, cmap = cm.Greys, zorder = 2, shading = 'nearest', vmin = -color_max, vmax = color_max)
+    ax.pcolormesh(xgrille, xgrille, Grille.T, cmap = cm.Greys, zorder = 2, shading = 'nearest', vmin = -color_max, vmax = color_max)
     ax.plot(X_cm[0], X_cm[1], 'rx', zorder=3)
     ax.set_xlabel("x")
     ax.set_ylabel("y")
@@ -210,8 +210,7 @@ fig, ax = plt.subplots()
 ax.scatter(x,y, c = M, zorder = 3)
 ax.set(xlim=(0, dim), ylim=(0, dim))
 Grille, X_cm = grille(mvt[0][:,:,int(T/dt)], M, nb_pt, dx)
-#X_cm, Grille = grille(mvt[0][:,:,int(T/dt)], M, nb_pt, dx)
-ax.pcolormesh(xgrille, xgrille, Grille, cmap = cm.Greys, zorder = 2, shading = 'nearest', vmin = -color_max, vmax = color_max)
+ax.pcolormesh(xgrille, xgrille, Grille.T, cmap = cm.Greys, zorder = 2, shading = 'nearest', vmin = -color_max, vmax = color_max)
 
 ax.set_xlabel("x")
 ax.set_ylabel("y")
