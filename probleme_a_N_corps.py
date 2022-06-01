@@ -1,8 +1,6 @@
 """
 Modélisation d'un problème à N corps en avec la méthode des champs moyens
 
-Séances 4e
-
 Auteurs : Ludmilla Allard et Annaëlle Sorce
 """
 
@@ -68,7 +66,6 @@ def grille(Xi,M,nb_pt, dx) :
 
 
 
-
 # Fonction permettant de calculer le gradient du potentiel en un point donné dans les limites de notre grille de potentiel :
 @nb.njit
 def grad(f, X_cm, X, etoile, dx) :
@@ -112,7 +109,7 @@ grille_fixe = grille(Xi,M,nb_pt, dx)
 @nb.njit
 def leapfrog(X, V, i, N, dt) :
     X_demi = X + V*dt/2
-    Grille,X_cm = grille(X_demi, M, nb_pt, dx)
+    Grille, X_cm = grille(X_demi, M, nb_pt, dx)
     #Grille, X_cm = grille_fixe
    
     dV = np.zeros_like(V)
@@ -189,7 +186,6 @@ for t in range(1, int(T/dt)+1, int(dt_video/dt)) :
     x = X[:,t-1]
     y = Y[:,t-1]
     
-    
     fig, ax = plt.subplots()
     
     ax.scatter(x,y, s = M, c= M, zorder = 3)
@@ -213,7 +209,8 @@ fig, ax = plt.subplots()
     
 ax.scatter(x,y, c = M, zorder = 3)
 ax.set(xlim=(0, dim), ylim=(0, dim))
-Grille, X_cm = grille(mvt[0][:,:,int(T/dt)], M, nb_pt, dx)
+#Grille, X_cm = grille(mvt[0][:,:,int(T/dt)], M, nb_pt, dx)
+X_cm, Grille = grille(mvt[0][:,:,int(T/dt)], M, nb_pt, dx)
 ax.pcolormesh(xgrille, xgrille, Grille, cmap = cm.Greys, zorder = 2, shading = 'nearest', vmin = -color_max, vmax = color_max)
 
 ax.set_xlabel("x")
