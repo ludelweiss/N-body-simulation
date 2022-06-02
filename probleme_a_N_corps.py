@@ -31,6 +31,9 @@ def Init(i,N,dim) :
    
     # Initialisation des positions :
     X=np.random.normal(dim/2, dim/20, (i, N))
+    """X1 = np.random.normal(dim/4, dim/20, (i,N/2))
+    X2 = np.random.normal(3*dim/4, dim/20, (i,N/2))
+    X = np.vstack((X1,X2))"""
     
     # Initialisation des masses :
     M=np.random.uniform(0.2 ,10, N)
@@ -97,8 +100,6 @@ def grad(f, X_cm, X, etoile, dx) :
         
     else :
         grad = np.sum( M ) / ( np.sum( (coord - X_cm )**2) )**1.5 * (coord-X_cm)  #gradient du potentiel calculé en fonction de la distance par rapport au centre de masse
-
-        
 
     return grad
  
@@ -221,4 +222,3 @@ plt.savefig('Mvt-N-part_leapfrog/mvt_N_particules_%03g.png'%(cpt+1),dpi=150)
 # creation des vidéos
 os.system("ffmpeg -y -r 10 -i Mvt-N-part_leapfrog/mvt_N_particules_%03d.png mvt-N-part_leapfrog.mp4")
 shutil.rmtree("Mvt-N-part_leapfrog")
-
