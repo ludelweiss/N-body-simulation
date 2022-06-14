@@ -30,7 +30,10 @@ np.random.seed(1451451421)
 def Init(i,N,dim) :
    
     # Initialisation des positions :
-    X=np.random.normal(dim/2, dim/20, (i, N))
+    #X=np.random.normal(dim/2, dim/20, (i, N))
+    X1 = np.random.normal(dim/4, dim/20, (i,int(N/4)))
+    X2 = np.random.normal(3*dim/4, dim/20, (i,int(3*N/4)))
+    X = np.hstack((X1, X2))
     
     # Initialisation des masses :
     M=np.random.uniform(0.2 ,10, N)
@@ -219,6 +222,6 @@ plt.savefig('Mvt-N-part_leapfrog/mvt_N_particules_%03g.png'%(cpt+1),dpi=150)
 
 
 # creation des vidéos
-os.system("ffmpeg -y -r 10 -i Mvt-N-part_leapfrog/mvt_N_particules_%03d.png mvt-N-part_leapfrog.mp4")
+os.system("ffmpeg -y -r 10 -i Mvt-N-part_leapfrog/mvt_N_particules_%03d.png mvt-N-part.mp4")
 shutil.rmtree("Mvt-N-part_leapfrog")
 
