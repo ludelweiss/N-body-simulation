@@ -30,9 +30,12 @@ np.random.seed(1451451421)
 def Init(i,N,dim) :
    
     # Initialisation des positions :
+    # Modele avec un seul amas :
     #X=np.random.normal(dim/2, dim/20, (i, N))
-    X1 = np.random.normal(dim/4, dim/20, (i,int(N/4)))
-    X2 = np.random.normal(3*dim/4, dim/20, (i,int(3*N/4)))
+    
+    # Modele avec deux amas :
+    X1 = np.random.normal(dim/4, dim/20, (i,int(N/2)))
+    X2 = np.random.normal(3*dim/4, dim/20, (i,int(N/2)))
     X = np.hstack((X1, X2))
     
     # Initialisation des masses :
